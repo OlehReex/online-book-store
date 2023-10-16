@@ -1,9 +1,9 @@
 package onlinebookstore.repository.impl;
 
-import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import onlinebookstore.exception.DataProcessingException;
+import onlinebookstore.exception.EntityNotFoundException;
 import onlinebookstore.model.Book;
 import onlinebookstore.repository.BookRepository;
 import org.hibernate.Session;
@@ -31,6 +31,15 @@ public class BookRepositoryImpl implements BookRepository {
             return session.createQuery("FROM Book", Book.class).getResultList();
         } catch (Exception e) {
             throw new EntityNotFoundException("Can't get books from DB", e);
+        }
+    }
+
+    @Override
+    public Book findById(Long id) {
+        try (Session session = sessionFactory.openSession()) {
+            return session.find(Book.class, id);
+        } catch (Exception e) {
+            throw new EntityNotFoundException("Can't find book with id " + id, e);
         }
     }
 }
