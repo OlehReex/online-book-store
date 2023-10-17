@@ -1,6 +1,7 @@
 package onlinebookstore.repository.impl;
 
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import onlinebookstore.exception.DataProcessingException;
 import onlinebookstore.exception.EntityNotFoundException;
@@ -35,11 +36,11 @@ public class BookRepositoryImpl implements BookRepository {
     }
 
     @Override
-    public Book findById(Long id) {
-        try (Session session = sessionFactory.openSession()) {
-            return session.find(Book.class, id);
+    public Optional<Book> findById(Long id) {
+        try {
+            return sessionFactory.fromSession(s -> Optional.ofNullable(s.get(Book.class, id)));
         } catch (Exception e) {
-            throw new EntityNotFoundException("Can't find book with id " + id, e);
+            throw new EntityNotFoundException("Can't find book with id" + id);
         }
     }
 }

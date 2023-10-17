@@ -1,6 +1,7 @@
 package onlinebookstore.repository;
 
 import java.util.List;
+import java.util.Optional;
 import onlinebookstore.model.Book;
 
 public interface BookRepository {
@@ -9,5 +10,5 @@ public interface BookRepository {
 
     List<Book> findAll();
 
-    Book findById(Long id);
+    Optional<Book> findById(Long id);
 }
