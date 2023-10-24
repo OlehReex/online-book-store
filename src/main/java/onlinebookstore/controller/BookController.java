@@ -1,12 +1,14 @@
 package onlinebookstore.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import onlinebookstore.dto.BookDto;
 import onlinebookstore.dto.CreateBookRequestDto;
 import onlinebookstore.service.BookService;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+@Validated
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(value = "/books")
@@ -29,7 +32,7 @@ public class BookController {
     }
 
     @GetMapping("/{id}")
-    public BookDto getBookById(@PathVariable Long id) {
+    public BookDto getBookById(@PathVariable @Positive Long id) {
         return bookService.findById(id);
     }
 
@@ -41,12 +44,12 @@ public class BookController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable @Positive Long id) {
         bookService.deleteById(id);
     }
 
     @PutMapping("/{id}")
-    public BookDto updateBookById(@PathVariable Long id,
+    public BookDto updateBookById(@PathVariable @Positive Long id,
                                   @RequestBody @Valid CreateBookRequestDto updateBookRequestDto) {
         return bookService.updateById(id, updateBookRequestDto);
     }

@@ -24,7 +24,6 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
             HttpStatusCode status,
             WebRequest request) {
         Map<String, Object> body = new LinkedHashMap<>();
-        body.put("status", HttpStatus.BAD_REQUEST);
         List<String> listErrors = ex.getBindingResult().getAllErrors().stream()
                 .map(this::getErrorMessage)
                 .toList();
