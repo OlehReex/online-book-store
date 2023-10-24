@@ -5,7 +5,7 @@ import jakarta.validation.ConstraintValidatorContext;
 import java.util.regex.Pattern;
 
 public class IsbnValidator implements ConstraintValidator<Isbn, String> {
-    private static final String ISBN_PATTERN = "^\\d{1,3}-\\d{1,3}-\\d{1,3}-\\d{1,2}$";
+    private static final String ISBN_PATTERN = "^\\d{2}-\\d{3}-\\d{3}-\\d{2}$";
 
     @Override
     public boolean isValid(String isbn, ConstraintValidatorContext constraintValidatorContext) {
