@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.PARAMETER, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Isbn {
-    String message() default "invalid isbn format, should be like '12-345-678-90'";
+    String message() default "Invalid ISBN format, should be 10 digits with '-' separators";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }
