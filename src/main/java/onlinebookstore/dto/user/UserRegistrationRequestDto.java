@@ -1,14 +1,15 @@
 package onlinebookstore.dto.user;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import onlinebookstore.validation.field.match.FieldMatch;
 
 @FieldMatch
 public record UserRegistrationRequestDto(
-        Long id,
-        @NotBlank @Email String email,
+        @Pattern(regexp = "^[\\w-]+@[a-zA-Z\\d-]+\\.[a-zA-Z]{2,}$",
+                message = "Incorrect Email format")
+        String email,
         @NotBlank String firstName,
         @NotBlank String lastName,
         String shippingAddress,
