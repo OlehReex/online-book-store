@@ -1,4 +1,4 @@
-package onlinebookstore.validation;
+package onlinebookstore.validation.field.match;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
@@ -7,11 +7,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Constraint(validatedBy = IsbnValidator.class)
-@Target({ElementType.PARAMETER, ElementType.FIELD})
+@Constraint(validatedBy = FieldMatchValidator.class)
+@Target({ElementType.TYPE, ElementType.PARAMETER, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Isbn {
-    String message() default "Invalid ISBN format, should be 10 digits with '-' separators";
+public @interface FieldMatch {
+    String message() default "Passwords should be the same";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

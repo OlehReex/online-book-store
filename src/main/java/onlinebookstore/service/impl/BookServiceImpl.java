@@ -2,8 +2,8 @@ package onlinebookstore.service.impl;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import onlinebookstore.dto.BookDto;
-import onlinebookstore.dto.CreateBookRequestDto;
+import onlinebookstore.dto.book.BookDto;
+import onlinebookstore.dto.book.CreateBookRequestDto;
 import onlinebookstore.exception.EntityNotFoundException;
 import onlinebookstore.mapper.BookMapper;
 import onlinebookstore.model.Book;

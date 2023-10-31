@@ -1,7 +1,7 @@
 package onlinebookstore.mapper;
 
-import onlinebookstore.dto.BookDto;
-import onlinebookstore.dto.CreateBookRequestDto;
+import onlinebookstore.dto.book.BookDto;
+import onlinebookstore.dto.book.CreateBookRequestDto;
 import onlinebookstore.model.Book;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;

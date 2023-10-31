@@ -6,11 +6,12 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import onlinebookstore.dto.BookDto;
-import onlinebookstore.dto.CreateBookRequestDto;
+import onlinebookstore.dto.book.BookDto;
+import onlinebookstore.dto.book.CreateBookRequestDto;
 import onlinebookstore.service.BookService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,18 +32,21 @@ public class BookController {
     private final BookService bookService;
 
     @GetMapping
+    @PreAuthorize("hasRole('ROLE_USER')")
     @Operation(summary = "Get all books", description = "Get list of all books")
     public List<BookDto> getAll(Pageable pageable) {
         return bookService.findAll(pageable);
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_USER')")
     @Operation(summary = "Get book", description = "Get book by id")
     public BookDto getBookById(@PathVariable @Positive Long id) {
         return bookService.findById(id);
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create new book", description = "Create new book")
     public BookDto createBook(@RequestBody @Valid CreateBookRequestDto bookRequestDto) {
@@ -50,6 +54,7 @@ public class BookController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Delete book", description = "Remove book from DB")
     public void delete(@PathVariable @Positive Long id) {
@@ -57,6 +62,7 @@ public class BookController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Operation(summary = "Update book", description = "Update book by id")
     public BookDto updateBookById(@PathVariable @Positive Long id,
                                   @RequestBody @Valid CreateBookRequestDto updateBookRequestDto) {
