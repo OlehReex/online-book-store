@@ -43,7 +43,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
     protected ResponseEntity<Object> handleRegistrationException(
             RegistrationException exception) {
         return ResponseEntity
-                .status(HttpStatus.NOT_ACCEPTABLE)
+                .status(HttpStatus.CONFLICT)
                 .body(exception.getMessage());
     }
 

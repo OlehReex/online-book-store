@@ -2,8 +2,6 @@ package onlinebookstore.service.impl;
 
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
-import onlinebookstore.dto.user.UserLoginRequestDto;
-import onlinebookstore.dto.user.UserLoginResponseDto;
 import onlinebookstore.dto.user.UserRegistrationRequestDto;
 import onlinebookstore.dto.user.UserResponseDto;
 import onlinebookstore.exception.RegistrationException;
@@ -14,10 +12,10 @@ import onlinebookstore.repository.RoleRepository;
 import onlinebookstore.repository.UserRepository;
 import onlinebookstore.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
-@Component
+@Service
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -27,7 +25,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDto register(UserRegistrationRequestDto registrationRequest)
             throws RegistrationException {
-        if (userRepository.findByEmail(registrationRequest.email()).isPresent()) {
+        if (userRepository.existsByEmail(registrationRequest.email())) {
             throw new RegistrationException("Unable to complete registration.");
         }
         User userToSave = userMapper.toUser(registrationRequest);
@@ -35,10 +33,5 @@ public class UserServiceImpl implements UserService {
         userToSave.setPassword(passwordEncoder.encode(registrationRequest.password()));
         userRepository.save(userToSave);
         return userMapper.toUserResponseDto(userToSave);
-    }
-
-    @Override
-    public UserLoginResponseDto login(UserLoginRequestDto loginRequest) {
-        return null;
     }
 }
