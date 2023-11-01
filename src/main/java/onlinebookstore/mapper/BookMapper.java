@@ -1,8 +1,10 @@
 package onlinebookstore.mapper;
 
 import onlinebookstore.dto.book.BookDto;
+import onlinebookstore.dto.book.BookDtoWithoutCategoryIds;
 import onlinebookstore.dto.book.CreateBookRequestDto;
 import onlinebookstore.model.Book;
+import org.mapstruct.AfterMapping;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
@@ -19,5 +21,11 @@ public interface BookMapper {
 
     Book toBook(CreateBookRequestDto bookRequestDto);
 
+    BookDtoWithoutCategoryIds toBookWithoutCategories(Book book);
+
     void updateBook(CreateBookRequestDto updatedRequestDto, @MappingTarget Book bookToUpdate);
+
+    @AfterMapping
+    default void setCategoryIds(@MappingTarget BookDto bookDto, Book book) {
+    }
 }
