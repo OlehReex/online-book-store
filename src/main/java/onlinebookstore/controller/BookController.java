@@ -10,6 +10,7 @@ import onlinebookstore.dto.book.BookDto;
 import onlinebookstore.dto.book.CreateBookRequestDto;
 import onlinebookstore.service.BookService;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -32,14 +33,14 @@ public class BookController {
     private final BookService bookService;
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasRole('USER')")
     @Operation(summary = "Get all books", description = "Get list of all books")
-    public List<BookDto> getAll(Pageable pageable) {
+    public List<BookDto> getAll(@PageableDefault(size = 10) Pageable pageable) {
         return bookService.findAll(pageable);
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasRole('USER')")
     @Operation(summary = "Get book", description = "Get book by id")
     public BookDto getBookById(@PathVariable @Positive Long id) {
         return bookService.findById(id);

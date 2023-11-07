@@ -2,6 +2,7 @@ package onlinebookstore.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import onlinebookstore.dto.category.CategoryRequestDto;
 import onlinebookstore.service.BookService;
 import onlinebookstore.service.CategoryService;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -35,25 +37,25 @@ public class CategoryController {
     private final BookService bookService;
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasRole('USER')")
     @Operation(summary = "Get category", description = "Get category by id")
     public CategoryDto getCategoryById(@PathVariable @Positive Long id) {
         return categoryService.getById(id);
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasRole('USER')")
     @Operation(summary = "Get all categories", description = "Get list of all categories")
-    public List<CategoryDto> getAll(Pageable pageable) {
+    public List<CategoryDto> getAll(@PageableDefault(size = 10) Pageable pageable) {
         return categoryService.findAll(pageable);
     }
 
     @GetMapping("/{id}/books")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    @PreAuthorize("hasRole('USER')")
     @Operation(summary = "Get books by category",
             description = "Get list of all books by category id")
     public List<BookDtoWithoutCategoryIds> getBooksByCategoryId(
-            @PathVariable @Positive Long id, Pageable pageable) {
+            @PathVariable @Positive Long id, @PageableDefault(size = 10) Pageable pageable) {
         return bookService.findAllByCategoryId(id, pageable);
     }
 
@@ -61,16 +63,15 @@ public class CategoryController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create new category", description = "Create new category")
-    public CategoryDto createCategory(@RequestBody CategoryRequestDto requestDto) {
+    public CategoryDto createCategory(@Valid @RequestBody CategoryRequestDto requestDto) {
         return categoryService.save(requestDto);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-
     @Operation(summary = "Update category", description = "Update category by id")
     public CategoryDto updateCategory(@PathVariable @Positive Long id,
-                                              @RequestBody CategoryRequestDto requestDto) {
+                                      @Valid @RequestBody CategoryRequestDto requestDto) {
         return categoryService.update(id, requestDto);
     }
 
@@ -78,7 +79,7 @@ public class CategoryController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Delete category", description = "Remove category from DB")
-    public void deleteCategory(@PathVariable Long id) {
+    public void deleteCategory(@PathVariable @Positive Long id) {
         categoryService.deleteById(id);
     }
 }

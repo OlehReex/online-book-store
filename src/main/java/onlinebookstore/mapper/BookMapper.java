@@ -4,6 +4,7 @@ import onlinebookstore.dto.book.BookDto;
 import onlinebookstore.dto.book.BookDtoWithoutCategoryIds;
 import onlinebookstore.dto.book.CreateBookRequestDto;
 import onlinebookstore.model.Book;
+import onlinebookstore.model.Category;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
@@ -27,5 +28,9 @@ public interface BookMapper {
 
     @AfterMapping
     default void setCategoryIds(@MappingTarget BookDto bookDto, Book book) {
+        bookDto.setCategoriesId(
+                book.getCategories().stream()
+                        .map(Category::getId)
+                        .toList());
     }
 }
