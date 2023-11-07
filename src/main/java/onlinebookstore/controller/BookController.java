@@ -6,7 +6,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import onlinebookstore.dto.book.BookDto;
 import onlinebookstore.dto.book.BookDtoWithoutCategoryIds;
 import onlinebookstore.dto.book.CreateBookRequestDto;
 import onlinebookstore.service.BookService;
