@@ -20,17 +20,17 @@ public class BookServiceImpl implements BookService {
     private final BookMapper bookMapper;
 
     @Override
-    public BookDto save(CreateBookRequestDto bookRequestDto) {
+    public BookDtoWithoutCategoryIds save(CreateBookRequestDto bookRequestDto) {
         Book savedBook = bookRepository
                 .save(bookMapper.toBook(bookRequestDto));
-        return bookMapper.toDto(savedBook);
+        return bookMapper.toBookWithoutCategories(savedBook);
     }
 
     @Override
-    public List<BookDto> findAll(Pageable pageable) {
+    public List<BookDtoWithoutCategoryIds> findAll(Pageable pageable) {
         return bookRepository.findAll(pageable)
                 .stream()
-                .map(bookMapper::toDto)
+                .map(bookMapper::toBookWithoutCategories)
                 .toList();
     }
 
@@ -42,9 +42,9 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookDto findById(Long id) {
+    public BookDtoWithoutCategoryIds findById(Long id) {
         return bookRepository.findById(id)
-                .map(bookMapper::toDto)
+                .map(bookMapper::toBookWithoutCategories)
                 .orElseThrow(() -> new EntityNotFoundException("Can't find book with id " + id));
     }
 
@@ -54,10 +54,11 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookDto updateById(Long id, CreateBookRequestDto updateBookRequestDto) {
+    public BookDtoWithoutCategoryIds updateById(
+            Long id, CreateBookRequestDto updateBookRequestDto) {
         Book bookToUpdate = bookRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Can't find book with id " + id));
         bookMapper.updateBook(updateBookRequestDto, bookToUpdate);
-        return bookMapper.toDto(bookRepository.save(bookToUpdate));
+        return bookMapper.toBookWithoutCategories(bookRepository.save(bookToUpdate));
     }
 }
