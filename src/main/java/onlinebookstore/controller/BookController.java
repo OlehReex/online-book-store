@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import onlinebookstore.dto.book.BookDto;
 import onlinebookstore.dto.book.BookDtoWithoutCategoryIds;
 import onlinebookstore.dto.book.CreateBookRequestDto;
 import onlinebookstore.service.BookService;
@@ -35,14 +36,14 @@ public class BookController {
     @GetMapping
     @PreAuthorize("hasRole('USER')")
     @Operation(summary = "Get all books", description = "Get list of all books")
-    public List<BookDtoWithoutCategoryIds> getAll(@PageableDefault(size = 10) Pageable pageable) {
+    public List<BookDto> getAll(@PageableDefault(size = 10) Pageable pageable) {
         return bookService.findAll(pageable);
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('USER')")
     @Operation(summary = "Get book", description = "Get book by id")
-    public BookDtoWithoutCategoryIds getBookById(@PathVariable @Positive Long id) {
+    public BookDto getBookById(@PathVariable @Positive Long id) {
         return bookService.findById(id);
     }
 
@@ -50,7 +51,7 @@ public class BookController {
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create new book", description = "Create new book")
-    public BookDtoWithoutCategoryIds createBook(
+    public BookDto createBook(
             @RequestBody @Valid CreateBookRequestDto bookRequestDto) {
         return bookService.save(bookRequestDto);
     }
