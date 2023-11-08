@@ -3,6 +3,7 @@ package onlinebookstore.service.impl;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import onlinebookstore.dto.book.BookDto;
+import onlinebookstore.dto.book.BookDtoWithoutCategoryIds;
 import onlinebookstore.dto.book.CreateBookRequestDto;
 import onlinebookstore.exception.EntityNotFoundException;
 import onlinebookstore.mapper.BookMapper;
@@ -34,8 +35,15 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    public List<BookDtoWithoutCategoryIds> findAllByCategoryId(Long id, Pageable pageable) {
+        return bookRepository.findAllByCategoryId(id, pageable).stream()
+                .map(bookMapper::toBookWithoutCategories)
+                .toList();
+    }
+
+    @Override
     public BookDto findById(Long id) {
-        return bookRepository.findById(id)
+        return bookRepository.getBookById(id)
                 .map(bookMapper::toDto)
                 .orElseThrow(() -> new EntityNotFoundException("Can't find book with id " + id));
     }
@@ -46,10 +54,11 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookDto updateById(Long id, CreateBookRequestDto updateBookRequestDto) {
+    public BookDtoWithoutCategoryIds updateById(
+            Long id, CreateBookRequestDto updateBookRequestDto) {
         Book bookToUpdate = bookRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Can't find book with id " + id));
         bookMapper.updateBook(updateBookRequestDto, bookToUpdate);
-        return bookMapper.toDto(bookRepository.save(bookToUpdate));
+        return bookMapper.toBookWithoutCategories(bookRepository.save(bookToUpdate));
     }
 }
