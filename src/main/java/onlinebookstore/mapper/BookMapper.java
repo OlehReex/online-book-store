@@ -11,6 +11,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValueCheckStrategy;
 
+import java.util.stream.Collectors;
+
 @Mapper(
         componentModel = "spring",
         injectionStrategy = InjectionStrategy.CONSTRUCTOR,
@@ -28,9 +30,17 @@ public interface BookMapper {
 
     @AfterMapping
     default void setCategoryIds(@MappingTarget BookDto bookDto, Book book) {
-        bookDto.setCategoriesId(
+        bookDto.setCategoriesIds(
                 book.getCategories().stream()
                         .map(Category::getId)
                         .toList());
+    }
+
+    @AfterMapping
+    default void setCategories(@MappingTarget Book book, CreateBookRequestDto bookDto) {
+        book.setCategories(
+                bookDto.categoriesIds().stream()
+                        .map(Category::new)
+                        .collect(Collectors.toSet()));
     }
 }
