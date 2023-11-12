@@ -1,5 +1,6 @@
 package onlinebookstore.mapper;
 
+import java.util.stream.Collectors;
 import onlinebookstore.dto.book.BookDto;
 import onlinebookstore.dto.book.BookDtoWithoutCategoryIds;
 import onlinebookstore.dto.book.CreateBookRequestDto;
@@ -10,8 +11,6 @@ import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValueCheckStrategy;
-
-import java.util.stream.Collectors;
 
 @Mapper(
         componentModel = "spring",
