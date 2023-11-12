@@ -1,5 +1,6 @@
 package onlinebookstore.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
@@ -30,18 +31,22 @@ public class ShoppingCartController {
 
     @GetMapping()
     @PreAuthorize("hasRole('USER')")
+    @Operation(summary = "Get shopping cart",
+            description = "Get shopping cart information and list of all cart items")
     public ShoppingCartResponseDto getShoppingCart() {
         return shoppingCartService.getShoppingCart();
     }
 
     @PostMapping()
     @PreAuthorize("hasRole('USER')")
+    @Operation(summary = "Add book", description = "Add new item to shopping cart")
     public CartItemResponseDto addBookToCart(@RequestBody CartItemRequestDto cartItemRequestDto) {
         return shoppingCartService.addItemToCart(cartItemRequestDto);
     }
 
     @PutMapping("/cart-items/{cartItemId}")
     @PreAuthorize("hasRole('USER')")
+    @Operation(summary = "Update quantity", description = "Update item quantity")
     public CartItemQuantityDto updateBookQuantity(
             @PathVariable @Positive Long cartItemId, @RequestBody CartItemQuantityDto quantityDto) {
         return shoppingCartService.changeQuantity(cartItemId, quantityDto);
@@ -49,6 +54,7 @@ public class ShoppingCartController {
 
     @DeleteMapping("/books/{id}")
     @PreAuthorize("hasRole('USER')")
+    @Operation(summary = "Remove book", description = "Remove item from shopping cart")
     public ShoppingCartResponseDto removeBookFromCart(@PathVariable @Positive Long id) {
         return shoppingCartService.removeCartItem(id);
     }
