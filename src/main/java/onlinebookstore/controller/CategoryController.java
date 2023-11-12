@@ -60,7 +60,7 @@ public class CategoryController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create new category", description = "Create new category")
     public CategoryDto createCategory(@Valid @RequestBody CategoryRequestDto requestDto) {
@@ -68,7 +68,7 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Update category", description = "Update category by id")
     public CategoryDto updateCategory(@PathVariable @Positive Long id,
                                       @Valid @RequestBody CategoryRequestDto requestDto) {
@@ -76,7 +76,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Delete category", description = "Remove category from DB")
     public void deleteCategory(@PathVariable @Positive Long id) {
