@@ -1,5 +1,6 @@
 package onlinebookstore.mapper;
 
+import java.util.stream.Collectors;
 import onlinebookstore.dto.book.BookDto;
 import onlinebookstore.dto.book.BookDtoWithoutCategoryIds;
 import onlinebookstore.dto.book.CreateBookRequestDto;
@@ -38,9 +39,8 @@ public interface BookMapper {
 
     @AfterMapping
     default void setCategories(@MappingTarget Book book, CreateBookRequestDto bookDto) {
-        book.setCategories(
-                bookDto.categoriesIds().stream()
-                        .map(Category::new)
-                        .collect(Collectors.toSet()));
+        book.setCategories(bookDto.categoriesIds().stream()
+                .map(Category::new)
+                .collect(Collectors.toSet()));
     }
 }

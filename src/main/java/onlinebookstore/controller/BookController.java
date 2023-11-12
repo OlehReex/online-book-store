@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Positive;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import onlinebookstore.dto.book.BookDto;
+import onlinebookstore.dto.book.BookDtoWithoutCategoryIds;
 import onlinebookstore.dto.book.CreateBookRequestDto;
 import onlinebookstore.service.BookService;
 import org.springframework.data.domain.Pageable;
@@ -47,15 +48,16 @@ public class BookController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create new book", description = "Create new book")
-    public BookDto createBook(@RequestBody @Valid CreateBookRequestDto bookRequestDto) {
+    public BookDto createBook(
+            @RequestBody @Valid CreateBookRequestDto bookRequestDto) {
         return bookService.save(bookRequestDto);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Delete book", description = "Remove book from DB")
     public void delete(@PathVariable @Positive Long id) {
@@ -63,9 +65,9 @@ public class BookController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Update book", description = "Update book by id")
-    public BookDto updateBookById(@PathVariable @Positive Long id,
+    public BookDtoWithoutCategoryIds updateBookById(@PathVariable @Positive Long id,
                                   @RequestBody @Valid CreateBookRequestDto updateBookRequestDto) {
         return bookService.updateById(id, updateBookRequestDto);
     }
