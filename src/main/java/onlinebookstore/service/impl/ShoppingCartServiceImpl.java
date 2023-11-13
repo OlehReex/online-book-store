@@ -19,6 +19,7 @@ import onlinebookstore.repository.UserRepository;
 import onlinebookstore.service.ShoppingCartService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -30,11 +31,13 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     private final CartItemRepository cartItemRepository;
     private final CartItemMapper cartItemMapper;
 
+    @Transactional
     @Override
     public ShoppingCartResponseDto getShoppingCart() {
         return shoppingCartMapper.toResponseDto(getUserCart());
     }
 
+    @Transactional
     @Override
     public CartItemResponseDto addItemToCart(CartItemRequestDto cartItemRequestDto) {
         Book book = bookRepository.findById(cartItemRequestDto.bookId()).orElseThrow(() ->
@@ -54,11 +57,13 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         ShoppingCart shoppingCart = shoppingCartRepository.findByUserId(getUser().getId())
                 .orElseThrow(() -> new EntityNotFoundException("Shopping cart does not exists"));
         CartItem itemToDelete = cartItemRepository
-                .findByShoppingCartIdAndBookId(shoppingCart.getId(), bookId);
+                .findByShoppingCartIdAndBookId(shoppingCart.getId(), bookId)
+                .orElseThrow(() -> new EntityNotFoundException("Can't find item in shopping cart"));
         cartItemRepository.deleteById(itemToDelete.getId());
         return shoppingCartMapper.toResponseDto(getUserCart());
     }
 
+    @Transactional
     @Override
     public CartItemQuantityDto changeQuantity(
             Long cartItemId, CartItemQuantityDto quantityDto) {
@@ -81,8 +86,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     private User getUser() {
-        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-        return userRepository.findByEmail(userName).orElseThrow(() ->
-                new EntityNotFoundException("Can't find user with username: " + userName));
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userRepository.findByEmail(user.getEmail()).orElseThrow(() ->
+                new EntityNotFoundException("Can't find user with username: " + user.getEmail()));
     }
 }
