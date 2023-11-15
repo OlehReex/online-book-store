@@ -31,7 +31,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     private final CartItemRepository cartItemRepository;
     private final CartItemMapper cartItemMapper;
 
-    @Transactional
+    @Transactional(readOnly = true)
     @Override
     public ShoppingCartResponseDto getShoppingCart() {
         return shoppingCartMapper.toResponseDto(getUserCart());
