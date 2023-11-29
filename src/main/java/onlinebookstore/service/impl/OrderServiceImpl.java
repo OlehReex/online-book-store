@@ -1,7 +1,5 @@
 package onlinebookstore.service.impl;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -40,12 +38,16 @@ public class OrderServiceImpl implements OrderService {
     private final UserRepository userRepository;
     private final OrderItemMapper orderItemMapper;
 
+    @Transactional
     @Override
     public CreateOrderResponseDto createOrder(CreateOrderRequestDto orderRequestDto) {
-        Order order = initializeOrder(orderRequestDto,
-                shoppingCartRepository.findByUserId(getUser().getId()).orElseThrow(() ->
-                        new EntityNotFoundException("Can't find user")));
-        return orderMapper.toCreateOrderResponseDto(orderRepository.save(order));
+        ShoppingCart shoppingCart = shoppingCartRepository.findByUserId(
+                getUser().getId()).orElseThrow(() ->
+                new EntityNotFoundException("Can't find user"));
+        Order newOrder = orderMapper.toOrderFromDtoAndCart(orderRequestDto, shoppingCart);
+        newOrder.setOrderItems(createOrderItems(newOrder, shoppingCart));
+        cleanShoppingCart(shoppingCart);
+        return orderMapper.toCreateOrderResponseDto(orderRepository.save(newOrder));
     }
 
     @Override
@@ -82,20 +84,6 @@ public class OrderServiceImpl implements OrderService {
         return orderItemMapper.toResponseDto(orderItem);
     }
 
-    private Order initializeOrder(CreateOrderRequestDto orderRequestDto,
-                                  ShoppingCart shoppingCart) {
-        Order newOrder = new Order();
-        newOrder.setUser(shoppingCart.getUser());
-        newOrder.setStatus(Status.NEW);
-        newOrder.setShippingAddress(orderRequestDto.shippingAddress());
-        newOrder.setOrderDate(LocalDateTime.now());
-        newOrder.setTotal(getTotal(shoppingCart));
-        orderRepository.save(newOrder);
-        newOrder.setOrderItems(createOrderItems(newOrder, shoppingCart));
-        cleanShoppingCart(shoppingCart);
-        return newOrder;
-    }
-
     private Set<OrderItem> createOrderItems(Order order, ShoppingCart shoppingCart) {
         return shoppingCart.getCartItems().stream()
                 .map(i -> createNewOrderItem(order, i))
@@ -103,20 +91,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private OrderItem createNewOrderItem(Order order, CartItem cartItem) {
-        OrderItem orderItem = new OrderItem();
-        orderItem.setOrder(order);
-        orderItem.setBook(cartItem.getBook());
-        orderItem.setQuantity(cartItem.getQuantity());
-        orderItem.setPrice(cartItem.getBook().getPrice());
+        OrderItem orderItem = orderItemMapper.toOrder(order, cartItem);
         return orderItemRepository.save(orderItem);
-    }
-
-    private BigDecimal getTotal(ShoppingCart shoppingCart) {
-        return new BigDecimal(
-                String.valueOf(shoppingCart.getCartItems().stream()
-                .map(c -> c.getBook().getPrice()
-                        .multiply(new BigDecimal(c.getQuantity())))
-                        .reduce(BigDecimal.ZERO, BigDecimal::add)));
     }
 
     private void cleanShoppingCart(ShoppingCart shoppingCart) {

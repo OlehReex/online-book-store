@@ -5,4 +5,3 @@ public record OrderItemResponseDto(
         Long bookId,
         Integer quantity) {
 }
-

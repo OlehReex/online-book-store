@@ -2,6 +2,7 @@ package onlinebookstore.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -45,7 +46,8 @@ public class OrderController {
     @Operation(summary = "Create new order",
             description = "Take all cart items from shopping cart "
                           + "and create new order with those items")
-    public CreateOrderResponseDto createOrder(@RequestBody CreateOrderRequestDto orderRequestDto) {
+    public CreateOrderResponseDto createOrder(
+            @RequestBody @Valid CreateOrderRequestDto orderRequestDto) {
         return orderService.createOrder(orderRequestDto);
     }
 
@@ -70,8 +72,9 @@ public class OrderController {
     @PatchMapping("/{id}")
     @Operation(summary = "Update status",
             description = "Change order status while order is in progress")
-    public OrderStatusResponseDto updateStatus(@PathVariable @Positive Long id,
-                                               @RequestBody UpdateStatusRequestDto statusRequest) {
+    public OrderStatusResponseDto updateStatus(
+            @PathVariable @Positive Long id,
+            @RequestBody @Valid UpdateStatusRequestDto statusRequest) {
         return orderService.updateStatus(id, statusRequest);
     }
 }
