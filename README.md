@@ -9,7 +9,6 @@ This code implements a system for buying and selling books online. The buyer can
 3. [Structure of Class relations](#Class_relations)
 4. [Controllers and Endpoints](#Management_and_Endpoints)
 5. [Launch with Docker](#Launch_with_Docker)
-6. [Project Demonstration](#Project_Demonstration)
 
 <a name="Technologies_used"></a>
 ## :gear: Technology Stack
