@@ -3,12 +3,12 @@ This code implements a system for buying and selling books online. The buyer can
 
 <a name="Navigation"></a>
 ## :mag: Navigation
-0. [Technologies used](#Technologies_used)
-1. [Registration and Authentication](#Registration_and_Authentication)
-2. [Authorities and Capabilities](#Users_roles)
-3. [Structure of Class relations](#Class_relations)
-4. [Controllers and Endpoints](#Management_and_Endpoints)
-5. [Launch with Docker](#Launch_with_Docker)
+1. [Technologies used](#Technologies_used)
+2. [Registration and Authentication](#Registration_and_Authentication)
+3. [Authorities and Capabilities](#Users_roles)
+4. [Structure of Class relations](#Class_relations)
+5. [Controllers and Endpoints](#Management_and_Endpoints)
+6. [Launch with Docker](#Launch_with_Docker)
 
 <a name="Technologies_used"></a>
 ## :gear: Technology Stack
