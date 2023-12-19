@@ -31,8 +31,7 @@ import org.springframework.web.context.WebApplicationContext;
 @Sql(scripts = {"classpath:database/add-categories-to-database.sql",
         "classpath:database/add-books-to-database.sql",
         "classpath:database/add-books-categories-dependencies.sql"})
-@Sql(scripts = {"classpath:database/delete-all-from-database.sql",
-        "classpath:database/reset-autoincrement.sql"},
+@Sql(scripts = {"classpath:database/delete-all-from-database.sql"},
         executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class BookControllerTest {
