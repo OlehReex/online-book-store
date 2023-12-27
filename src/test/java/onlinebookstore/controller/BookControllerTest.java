@@ -2,7 +2,6 @@ package onlinebookstore.controller;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-import static org.springframework.test.context.jdbc.SqlMergeMode.MergeMode.MERGE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -30,13 +29,13 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-@SqlMergeMode(MERGE)
 @Sql(scripts = {"classpath:database/add-categories-to-database.sql",
         "classpath:database/add-books-to-database.sql",
         "classpath:database/add-books-categories-dependencies.sql"})
 @Sql(scripts = {"classpath:database/delete-all-from-database.sql"},
         executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
 public class BookControllerTest {
     protected static MockMvc mockMvc;
 

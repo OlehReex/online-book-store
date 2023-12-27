@@ -34,7 +34,7 @@ public class BookRepositoryTest {
     }
 
     @Test
-    @DisplayName("Find all books by category id")
+    @DisplayName("Find all books by incorrect category id")
     void findBooks_byIncorrectCategoryId_returnEmptyList() {
         Long categoryId = 10L;
         List<Book> actual = bookRepository.findAllByCategoryId(categoryId, PageRequest.of(0, 10));
