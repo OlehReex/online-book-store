@@ -1,5 +1,5 @@
-INSERT INTO categories (id, name, description, is_deleted)
-VALUES (1L, 'Education', 'Some description', false);
+INSERT INTO categories (name, description, is_deleted)
+VALUES ('Education', 'Some description', false);
 
-INSERT INTO categories (id, name, description, is_deleted)
-VALUES (2L, 'Detective', 'Some description', false);
+INSERT INTO categories (name, description, is_deleted)
+VALUES ('Detective', 'Some description', false);
