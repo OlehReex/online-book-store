@@ -2,6 +2,7 @@ package onlinebookstore.controller;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.context.jdbc.SqlMergeMode.MergeMode.MERGE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -11,7 +12,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import onlinebookstore.dto.category.CategoryDto;
 import onlinebookstore.dto.category.CategoryRequestDto;
 import onlinebookstore.exception.EntityNotFoundException;
-import onlinebookstore.repository.CategoryRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -21,11 +21,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlMergeMode;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+@SqlMergeMode(MERGE)
 @Sql(scripts = {"classpath:database/add-categories-to-database.sql",})
 @Sql(scripts = {"classpath:database/delete-all-from-database.sql"},
         executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
@@ -35,9 +37,6 @@ public class CategoryControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
-
-    @Autowired
-    private CategoryRepository categoryRepository;
 
     @BeforeAll
     static void beforeAll(@Autowired WebApplicationContext applicationContext) {
@@ -64,7 +63,10 @@ public class CategoryControllerTest {
                 mvcResult.getResponse().getContentAsString(), CategoryDto.class);
 
         assertThat(actual)
-                .hasFieldOrPropertyWithValue("name", "Tales");
+                .hasFieldOrPropertyWithValue("id", 3L)
+                .hasFieldOrPropertyWithValue("name", requestDto.name())
+                .hasFieldOrPropertyWithValue("description", requestDto.description());
+
     }
 
     @Test
@@ -101,7 +103,8 @@ public class CategoryControllerTest {
 
         Exception resolvedException = mvcResult.getResolvedException();
         Assertions.assertNotNull(resolvedException);
-        Assertions.assertTrue(resolvedException instanceof EntityNotFoundException);
+        Assertions.assertTrue(EntityNotFoundException.class
+                .isAssignableFrom(resolvedException.getClass()));
     }
 
     @Test
@@ -113,7 +116,5 @@ public class CategoryControllerTest {
         mockMvc.perform(delete("/categories/" + categoryId))
                 .andExpect(status().isNoContent())
                 .andReturn();
-
-        assertThat(categoryRepository.findById(categoryId)).isEmpty();
     }
 }

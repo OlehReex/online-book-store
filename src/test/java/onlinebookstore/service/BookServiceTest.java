@@ -12,6 +12,7 @@ import onlinebookstore.dto.book.BookDtoWithoutCategoryIds;
 import onlinebookstore.dto.book.CreateBookRequestDto;
 import onlinebookstore.exception.EntityNotFoundException;
 import onlinebookstore.mapper.BookMapper;
+import onlinebookstore.mapper.impl.BookMapperImpl;
 import onlinebookstore.model.Book;
 import onlinebookstore.repository.BookRepository;
 import onlinebookstore.service.impl.BookServiceImpl;
@@ -21,12 +22,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 public class BookServiceTest {
-    @Mock
-    private BookMapper bookMapper;
+    @Spy
+    private BookMapper bookMapper = new BookMapperImpl();
 
     @Mock
     private BookRepository bookRepository;
@@ -38,25 +40,8 @@ public class BookServiceTest {
     @DisplayName("Save valid book")
     void saveBook_validRequest_returnBookDto() {
         Long bookId = 1L;
-        Book book = new Book();
-        book.setId(bookId);
-        book.setTitle("Clean Code");
-        book.setAuthor("Robert Martin");
-        book.setIsbn("00-000-000-01");
-        book.setPrice(new BigDecimal("100.00"));
-        book.setDescription("some description");
-        book.setCoverImage("https://some-image-url.com");
-        book.setCategories(new HashSet<>());
 
-        BookDto bookDto = new BookDto();
-        bookDto.setId(book.getId());
-        bookDto.setTitle(book.getTitle());
-        bookDto.setAuthor(book.getAuthor());
-        bookDto.setIsbn(book.getIsbn());
-        bookDto.setPrice(book.getPrice());
-        bookDto.setDescription(book.getDescription());
-        bookDto.setCoverImage(book.getCoverImage());
-        bookDto.setCategoriesIds(List.of());
+        Book book = createBook(bookId);
 
         CreateBookRequestDto bookRequestDto = new CreateBookRequestDto(
                 "Clean Code", "Robert Martin", "00-000-000-01",
@@ -65,7 +50,6 @@ public class BookServiceTest {
 
         Mockito.when(bookMapper.toBook(bookRequestDto)).thenReturn(book);
         Mockito.when(bookRepository.save(book)).thenReturn(book);
-        Mockito.when(bookMapper.toDto(book)).thenReturn(bookDto);
 
         BookDto actual = bookService.save(bookRequestDto);
 
@@ -83,28 +67,9 @@ public class BookServiceTest {
     void getBook_byValidId_returnBookDto() {
         Long bookId = 1L;
 
-        Book book = new Book();
-        book.setId(bookId);
-        book.setTitle("Clean Code");
-        book.setAuthor("Robert Martin");
-        book.setIsbn("00-000-000-01");
-        book.setPrice(new BigDecimal("100.00"));
-        book.setDescription("some description");
-        book.setCoverImage("https://some-image-url.com");
-        book.setCategories(new HashSet<>());
-
-        BookDto bookDto = new BookDto();
-        bookDto.setId(book.getId());
-        bookDto.setTitle(book.getTitle());
-        bookDto.setAuthor(book.getAuthor());
-        bookDto.setIsbn(book.getIsbn());
-        bookDto.setPrice(book.getPrice());
-        bookDto.setDescription(book.getDescription());
-        bookDto.setCoverImage(book.getCoverImage());
-        bookDto.setCategoriesIds(List.of());
+        Book book = createBook(bookId);
 
         Mockito.when(bookRepository.getBookById(bookId)).thenReturn(Optional.of(book));
-        Mockito.when(bookMapper.toDto(book)).thenReturn(bookDto);
 
         BookDto actual = bookService.findById(bookId);
 
@@ -133,15 +98,7 @@ public class BookServiceTest {
     void updateBook_validRequest_returnBookDtoWithoutCategoriesIds() {
         Long bookId = 1L;
 
-        Book book = new Book();
-        book.setId(bookId);
-        book.setTitle("Clean Code");
-        book.setAuthor("Robert Martin");
-        book.setIsbn("00-000-000-01");
-        book.setPrice(new BigDecimal("100.00"));
-        book.setDescription("some description");
-        book.setCoverImage("https://some-image-url.com");
-        book.setCategories(new HashSet<>());
+        Book book = createBook(bookId);
 
         CreateBookRequestDto updateBookRequestDto = new CreateBookRequestDto(
                 "Clean Code", "Robert Martin", "00-000-000-01",
@@ -158,14 +115,8 @@ public class BookServiceTest {
         updatedBook.setCoverImage(book.getCoverImage());
         updatedBook.setCategories(book.getCategories());
 
-        BookDtoWithoutCategoryIds bookDto = new BookDtoWithoutCategoryIds(
-                book.getId(), book.getTitle(), book.getAuthor(),
-                book.getIsbn(), updateBookRequestDto.price(),
-                updateBookRequestDto.description(), book.getCoverImage());
-
         Mockito.when(bookRepository.findById(bookId)).thenReturn(Optional.of(book));
         Mockito.when(bookRepository.save(book)).thenReturn(updatedBook);
-        Mockito.when(bookMapper.toBookWithoutCategories(updatedBook)).thenReturn(bookDto);
 
         BookDtoWithoutCategoryIds actual = bookService.updateById(bookId, updateBookRequestDto);
 
@@ -189,5 +140,18 @@ public class BookServiceTest {
 
         Mockito.verify(bookRepository, Mockito.times(1)).deleteById(id);
         Mockito.verifyNoMoreInteractions(bookRepository);
+    }
+
+    private Book createBook(Long bookId) {
+        Book book = new Book();
+        book.setId(bookId);
+        book.setTitle("Clean Code");
+        book.setAuthor("Robert Martin");
+        book.setIsbn("00-000-000-01");
+        book.setPrice(new BigDecimal("100.00"));
+        book.setDescription("some description");
+        book.setCoverImage("https://some-image-url.com");
+        book.setCategories(new HashSet<>());
+        return book;
     }
 }

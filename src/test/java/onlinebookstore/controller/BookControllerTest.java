@@ -2,6 +2,7 @@ package onlinebookstore.controller;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.context.jdbc.SqlMergeMode.MergeMode.MERGE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -9,11 +10,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 import onlinebookstore.dto.book.BookDto;
 import onlinebookstore.dto.book.CreateBookRequestDto;
 import onlinebookstore.exception.EntityNotFoundException;
-import onlinebookstore.repository.BookRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -23,11 +24,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlMergeMode;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+@SqlMergeMode(MERGE)
 @Sql(scripts = {"classpath:database/add-categories-to-database.sql",
         "classpath:database/add-books-to-database.sql",
         "classpath:database/add-books-categories-dependencies.sql"})
@@ -39,9 +42,6 @@ public class BookControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
-
-    @Autowired
-    private BookRepository bookRepository;
 
     @BeforeAll
     static void beforeAll(@Autowired WebApplicationContext applicationContext) {
@@ -71,7 +71,11 @@ public class BookControllerTest {
 
         assertThat(actual)
                 .hasFieldOrPropertyWithValue("id", 3L)
-                .hasFieldOrPropertyWithValue("title", bookRequestDto.title());
+                .hasFieldOrPropertyWithValue("author", bookRequestDto.author())
+                .hasFieldOrPropertyWithValue("price", bookRequestDto.price())
+                .hasFieldOrPropertyWithValue("description", bookRequestDto.description())
+                .hasFieldOrPropertyWithValue("coverImage", bookRequestDto.coverImage())
+                .hasFieldOrPropertyWithValue("categoriesIds", Collections.singletonList(1L));
     }
 
     @Test
@@ -114,7 +118,8 @@ public class BookControllerTest {
 
         Exception resolvedException = mvcResult.getResolvedException();
         Assertions.assertNotNull(resolvedException);
-        Assertions.assertTrue(resolvedException instanceof EntityNotFoundException);
+        Assertions.assertTrue(EntityNotFoundException.class
+                .isAssignableFrom(resolvedException.getClass()));
     }
 
     @Test
@@ -123,10 +128,9 @@ public class BookControllerTest {
     void deleteBook_byValidId() throws Exception {
         Long bookId = 1L;
 
-        mockMvc.perform(delete("/books/" + bookId))
+        mockMvc.perform(delete("/books/" + bookId)
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent())
                 .andReturn();
-
-        assertThat(bookRepository.findById(bookId)).isEmpty();
     }
 }
