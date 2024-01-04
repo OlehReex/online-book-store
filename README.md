@@ -1,4 +1,4 @@
-<h1 align="center">📚 Online Book Store 📚</h1>
+<h1 align="center">📚 StoryTelling Room 📚</h1>
 This code implements a system for buying and selling books online. The buyer can register, log in, find the necessary books, put them in the shopping cart and complete the order. All books, as well as other entities, are stored in the database, and their management is handled by the administrator. The application is developed in compliance with SOLID principles, so it is easy to scale, make changes and implement new features.
 
 <a name="Navigation"></a>
